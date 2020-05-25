@@ -114,10 +114,6 @@ Esp3D::Esp3D()
 //Begin which setup everything
 void Esp3D::begin(uint16_t startdelayms, uint16_t recoverydelayms)
 {
-    pinMode(15, OUTPUT);
-    digitalWrite(15, 0);
-    pinMode(15, INPUT);
-
     pinMode(2, OUTPUT);
     digitalWrite(2, 0);
 
