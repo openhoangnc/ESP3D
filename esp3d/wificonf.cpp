@@ -89,6 +89,8 @@ void dateTime (uint16_t* date, uint16_t* dtime)
 }
 #endif
 
+extern void ledBlinkDelay(uint32_t ms);
+
 WIFI_CONFIG::WIFI_CONFIG()
 {
     iweb_port = DEFAULT_WEB_PORT;
@@ -327,11 +329,11 @@ bool WIFI_CONFIG::Setup (bool force_ap)
             //apply according active wifi mode
             LOG ("Set IP\r\n")
             WiFi.softAPConfig ( local_ip,  gateway,  subnet);
-            delay (100);
+            ledBlinkDelay (100);
         }
         LOG ("Disable STA\r\n")
         WiFi.enableSTA (false);
-        delay (100);
+        ledBlinkDelay (100);
         LOG ("Set phy mode\r\n")
         //setup PHY_MODE
         if (!CONFIG::read_byte (EP_AP_PHY_MODE, &bflag ) ) {
@@ -344,18 +346,18 @@ bool WIFI_CONFIG::Setup (bool force_ap)
         esp_wifi_set_protocol (ESP_IF_WIFI_AP, bflag);
 #endif
         wifi_config.WiFi_on = true;
-        delay (50);
+        ledBlinkDelay (50);
         WiFi.softAP (sbuf, pwd);
 #ifdef ESP_OLED_FEATURE
         OLED_DISPLAY::display_signal(100);
         OLED_DISPLAY::setCursor(0, 0);
         ESPCOM::print(sbuf, OLED_PIPE);
 #endif
-        delay (100);
+        ledBlinkDelay (100);
 #ifdef ARDUINO_ARCH_ESP8266
         WiFi.setPhyMode ( (WiFiPhyMode_t) bflag);
 #endif
-        delay (100);
+        ledBlinkDelay (100);
         LOG ("Get current config\r\n")
         //get current config
 #ifdef ARDUINO_ARCH_ESP32
@@ -399,7 +401,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
         conf.ap.beacon_interval = DEFAULT_BEACON_INTERVAL;
         if (esp_wifi_set_config (ESP_IF_WIFI_AP, &conf) != ESP_OK) {
             ESPCOM::println (F ("Error Wifi AP!"), PRINTER_PIPE);
-            delay (1000);
+            ledBlinkDelay (1000);
         }
 #else
         apconfig.max_connection = DEFAULT_MAX_CONNECTIONS;
@@ -407,7 +409,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
         //apply settings to current and to default
         if (!wifi_softap_set_config (&apconfig) || !wifi_softap_set_config_current (&apconfig) ) {
             ESPCOM::println (F ("Error Wifi AP!"), PRINTER_PIPE);
-            delay (1000);
+            ledBlinkDelay (1000);
         }
 #endif
     } else {
@@ -454,7 +456,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
             WiFi.config ( local_ip,  gateway,  subnet);
         }
         WiFi.enableAP (false);
-        delay (100);
+        ledBlinkDelay (100);
         if (!CONFIG::read_byte (EP_STA_PHY_MODE, &bflag ) ) {
             return false;
         }
@@ -462,7 +464,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
         //setup station mode
         WiFi.mode (WIFI_STA);
         wifi_config.WiFi_on = true;
-        delay (100);
+        ledBlinkDelay (100);
 #ifdef ARDUINO_ARCH_ESP8266
         WiFi.setPhyMode ( (WiFiPhyMode_t) bflag);
 #else
@@ -473,7 +475,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
         } else {
             WiFi.begin (sbuf);
         }
-        delay (100);
+        ledBlinkDelay (100);
 #ifdef ARDUINO_ARCH_ESP8266
         WiFi.setSleepMode ( (WiFiSleepType_t) sleep_mode);
 #else
@@ -483,7 +485,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
         }
         esp_wifi_set_ps ( (wifi_ps_type_t) sleep_mode);
 #endif
-        delay (100);
+        ledBlinkDelay (100);
         byte i = 0;
         //try to connect
         byte dot = 0;
@@ -534,7 +536,7 @@ bool WIFI_CONFIG::Setup (bool force_ap)
 #endif
 #endif
 
-            delay (500);
+            ledBlinkDelay (500);
             i++;
         }
         if (WiFi.status() != WL_CONNECTED) {
@@ -617,10 +619,10 @@ bool WIFI_CONFIG::Enable_servers()
         }
         if (!mdns.begin (hostname) ) {
             ESPCOM::println (F ("Error with mDNS!"), PRINTER_PIPE);
-            delay (1000);
+            ledBlinkDelay (1000);
         } else {
             // Check for any mDNS queries and send responses
-            delay (100);
+            ledBlinkDelay (100);
             wifi_config.mdns.addService ("http", "tcp", wifi_config.iweb_port);
         }
     }

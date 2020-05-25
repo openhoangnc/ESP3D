@@ -88,6 +88,20 @@ DHTesp dht;
 #include "syncwebserver.h"
 #endif
 
+void ledBlinkDelay(uint32_t ms) {
+    uint32_t start_display_time = millis();
+    uint32_t now = millis();
+    uint32_t v = 0;
+    digitalWrite(2, v);
+    while ( now - start_display_time < ms) {
+        delay(50);
+        now = millis();
+        digitalWrite(2, v);
+        v = 1 - v;
+    }
+    digitalWrite(2, 1);
+}
+
 //Contructor
 Esp3D::Esp3D()
 {
@@ -97,6 +111,13 @@ Esp3D::Esp3D()
 //Begin which setup everything
 void Esp3D::begin(uint16_t startdelayms, uint16_t recoverydelayms)
 {
+    pinMode(15, OUTPUT);
+    digitalWrite(15, 0);
+    pinMode(15, INPUT);
+
+    pinMode(2, OUTPUT);
+    digitalWrite(2, 0);
+
     // init:
     //WiFi.disconnect();
     WiFi.mode (WIFI_OFF);
@@ -133,7 +154,7 @@ void Esp3D::begin(uint16_t startdelayms, uint16_t recoverydelayms)
         now = millis();
     }
 #else
-    delay (startdelayms);
+    ledBlinkDelay(startdelayms);
 #endif
     CONFIG::InitDirectSD();
     CONFIG::InitPins();
@@ -156,14 +177,14 @@ void Esp3D::begin(uint16_t startdelayms, uint16_t recoverydelayms)
 #ifdef ARDUINO_ARCH_ESP8266
         Serial.setRxBufferSize (SERIAL_RX_BUFFER_SIZE);
 #endif
-        delay (2000);
+        ledBlinkDelay (2000);
         ESPCOM::println (F ("ESP EEPROM reset"), PRINTER_PIPE);
 #ifdef DEBUG_ESP3D
         CONFIG::print_config (DEBUG_PIPE, true);
         delay (1000);
 #endif
         CONFIG::reset_config();
-        delay (1000);
+        ledBlinkDelay (1000);
         //put some default value to a void some exception at first start
         WiFi.mode (WIFI_AP);
         wifi_config.WiFi_on = true;
@@ -249,6 +270,8 @@ void Esp3D::begin(uint16_t startdelayms, uint16_t recoverydelayms)
         WiFi.scanNetworks (true);
     }
 #endif
+
+    digitalWrite(2, 0);
     LOG ("Setup Done\r\n");
 }
 

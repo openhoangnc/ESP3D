@@ -19,8 +19,8 @@
 */
 
 //version and sources location
-#define FW_VERSION "2.1.1.b7"
-#define REPOSITORY "https://github.com/luc-github/ESP3D"
+#define FW_VERSION "2.1.1.b7-openhoangnc"
+#define REPOSITORY "https://github.com/openhoangnc/ESP3D"
 
 //Customize ESP3D ////////////////////////////////////////////////////////////////////////
 #define ESP8266_MODEL_NAME "ESP8266"

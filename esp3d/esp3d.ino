@@ -26,7 +26,7 @@ Esp3D myesp3d;
 //Setup
 void setup()
 {
-    myesp3d.begin();
+    myesp3d.begin(100, 100);
 }
 
 //main loop
